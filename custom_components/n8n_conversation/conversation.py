@@ -18,7 +18,7 @@ from homeassistant.helpers import (
 )
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import CONF_WEBHOOK_URL, DOMAIN
+from .const import CONF_OUTPUT_FIELD, CONF_WEBHOOK_URL, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -124,7 +124,8 @@ class N8nConversationEntity(
                     "Invalid response from n8n webhook, expected a JSON object"
                 )
 
-        reply = data.get("output")
+        output_field = self._config_entry.options[CONF_OUTPUT_FIELD]
+        reply = data.get(output_field)
 
         if not reply:
             raise HomeAssistantError("No response found in n8n webhook data")
