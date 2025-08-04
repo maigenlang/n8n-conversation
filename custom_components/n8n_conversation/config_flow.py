@@ -1,0 +1,129 @@
+"""Config flow for the n8n conversation integration."""
+
+from __future__ import annotations
+
+import logging
+from typing import Any
+
+import voluptuous as vol
+
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
+from homeassistant.core import callback
+
+from .const import (
+    CONF_NAME,
+    CONF_OUTPUT_FIELD,
+    CONF_WEBHOOK_URL,
+    DEFAULT_OUTPUT_FIELD,
+    DOMAIN,
+)
+
+_LOGGER = logging.getLogger(__name__)
+
+
+def _get_schema(options: dict[str, Any] | None = None) -> vol.Schema:
+    """Return the schema for the configuration form."""
+    if options is None:
+        options = {}
+
+    return vol.Schema(
+        {
+            vol.Required(
+                CONF_NAME,
+                description={"suggested_value": options.get(CONF_NAME, "n8n")},
+            ): str,
+            vol.Required(
+                CONF_WEBHOOK_URL,
+                description={"suggested_value": options.get(CONF_WEBHOOK_URL, "")},
+            ): str,
+            vol.Required(
+                CONF_OUTPUT_FIELD,
+                description={
+                    "suggested_value": options.get(
+                        CONF_OUTPUT_FIELD, DEFAULT_OUTPUT_FIELD
+                    )
+                },
+            ): str,
+        }
+    )
+
+
+class N8nConversationConfigFlow(ConfigFlow, domain=DOMAIN):
+    """Config flow for n8n conversation integration."""
+
+    VERSION = 1
+
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Handle a flow initialized by the user."""
+
+        if user_input is None:
+            return self.async_show_form(step_id="user", data_schema=_get_schema())
+
+        _LOGGER.debug(
+            "Creating n8n conversation configuration with user input: %s", user_input
+        )
+
+        webhook_url: str = user_input[CONF_WEBHOOK_URL]
+        if not webhook_url.startswith("http://") and not webhook_url.startswith(
+            "https://"
+        ):
+            _LOGGER.error("Invalid webhook URL: %s", webhook_url)
+            return self.async_show_form(
+                step_id="user",
+                data_schema=_get_schema(user_input),
+                errors={"base": "invalid_webhook_url"},
+            )
+
+        return self.async_create_entry(
+            title=user_input[CONF_NAME], data={}, options=user_input
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: ConfigEntry,
+    ) -> OptionsFlow:
+        """Create the options flow."""
+        return OptionsFlowHandler(dict(config_entry.options))
+
+
+class OptionsFlowHandler(OptionsFlow):
+    """Handle Options flow for n8n conversation integration."""
+
+    def __init__(self, options: dict[str, Any]) -> None:
+        """Initialize the options flow handler."""
+        self.options = options
+
+    async def async_step_init(self, user_input=None):
+        """Handle initial step."""
+
+        if user_input is None:
+            return self.async_show_form(
+                step_id="init",
+                data_schema=_get_schema(self.options),
+            )
+
+        _LOGGER.debug(
+            "Updating n8n conversation configuration with user input: %s",
+            user_input,
+        )
+
+        webhook_url: str = user_input[CONF_WEBHOOK_URL]
+        if not webhook_url.startswith("http://") and not webhook_url.startswith(
+            "https://"
+        ):
+            _LOGGER.error("Invalid webhook URL: %s", webhook_url)
+            return self.async_show_form(
+                step_id="user",
+                data_schema=_get_schema(user_input),
+                errors={"base": "invalid_webhook_url"},
+            )
+
+        return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)

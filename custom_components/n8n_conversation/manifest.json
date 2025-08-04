@@ -1,0 +1,10 @@
+{
+    "domain": "n8n_conversation",
+    "name": "n8n Conversation",
+    "codeowners": ["@EuleMitKeule"],
+    "config_flow": true,
+    "documentation": "https://github.com/eulemitkeule/n8n-conversation",
+    "iot_class": "calculated",
+    "issue_tracker": "https://github.com/eulemitkeule/n8n-conversation/issues",
+    "version": "0.0.0"
+}
