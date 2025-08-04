@@ -1,5 +1,6 @@
 """Conversation platform for n8n integration."""
 
+import json
 import logging
 from typing import Any, Literal
 
@@ -101,11 +102,18 @@ class N8nConversationEntity(
         if not user_messages:
             raise HomeAssistantError("No user message found in chat log")
 
+        def set_default(obj: Any) -> Any:
+            if isinstance(obj, set):
+                return list(obj)
+            return obj
+
         payload = {
             "user_id": user_input.context.user_id,
             "messages": messages,
             "query": user_messages[-1]["content"],
-            "exposed_entities": [dict(item) for item in self._get_exposed_entities()],
+            "exposed_entities": json.dumps(
+                self._get_exposed_entities(), default=set_default
+            ),
         }
 
         async with (
