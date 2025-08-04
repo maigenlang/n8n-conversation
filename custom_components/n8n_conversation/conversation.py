@@ -105,19 +105,19 @@ class N8nConversationEntity(
             "user_id": user_input.context.user_id,
             "messages": messages,
             "query": user_messages[-1]["content"],
-            "exposed_entities": self._get_exposed_entities(),
+            "exposed_entities": [dict(item) for item in self._get_exposed_entities()],
         }
 
         async with (
             aiohttp.ClientSession() as session,
-            session.post(self._webhook_url, json=payload, timeout=10) as resp,
+            session.post(self._webhook_url, json=payload, timeout=10) as response,
         ):
-            if resp.status != 200:
+            if response.status != 200:
                 raise HomeAssistantError(
-                    f"Error contacting n8n webhook: HTTP {resp.status} - {resp.reason}"
+                    f"Error contacting n8n webhook: HTTP {response.status} - {response.reason}"
                 )
 
-            data = await resp.json()
+            data = await response.json()
 
             if not isinstance(data, dict):
                 raise HomeAssistantError(
