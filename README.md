@@ -5,6 +5,9 @@
 ![GitHub License](https://img.shields.io/github/license/eulemitkeule/n8n-conversation)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/eulemitkeule?logo=GitHub-Sponsors)
 
+> [!NOTE]
+> This integration requires Home Assistant `2025.8`.
+
 _Integration to connect Home Assistant with n8n workflows through conversation agents._
 
 **This integration allows you to use n8n workflows as conversation agents in Home Assistant, enabling powerful automation and AI-driven interactions with your smart home.**
