@@ -5,7 +5,8 @@
                 "data": {
                     "name": "Name",
                     "webhook_url": "Webhook URL",
-                    "output_field": "Output Field"
+                    "output_field": "Output Field",
+                    "timeout": "Timeout (seconds)"
                 }
             }
         },

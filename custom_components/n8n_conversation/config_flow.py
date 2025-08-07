@@ -18,8 +18,12 @@ from homeassistant.core import callback
 from .const import (
     CONF_NAME,
     CONF_OUTPUT_FIELD,
+    CONF_TIMEOUT,
     CONF_WEBHOOK_URL,
+    DEFAULT_NAME,
     DEFAULT_OUTPUT_FIELD,
+    DEFAULT_TIMEOUT,
+    DEFAULT_WEBHOOK_URL,
     DOMAIN,
 )
 
@@ -35,11 +39,17 @@ def _get_schema(options: dict[str, Any] | None = None) -> vol.Schema:
         {
             vol.Required(
                 CONF_NAME,
-                description={"suggested_value": options.get(CONF_NAME, "n8n")},
+                description={"suggested_value": options.get(CONF_NAME, DEFAULT_NAME)},
+                default=DEFAULT_NAME,
             ): str,
             vol.Required(
                 CONF_WEBHOOK_URL,
-                description={"suggested_value": options.get(CONF_WEBHOOK_URL, "")},
+                description={
+                    "suggested_value": options.get(
+                        CONF_WEBHOOK_URL, DEFAULT_WEBHOOK_URL
+                    )
+                },
+                default=DEFAULT_WEBHOOK_URL,
             ): str,
             vol.Required(
                 CONF_OUTPUT_FIELD,
@@ -48,7 +58,15 @@ def _get_schema(options: dict[str, Any] | None = None) -> vol.Schema:
                         CONF_OUTPUT_FIELD, DEFAULT_OUTPUT_FIELD
                     )
                 },
+                default=DEFAULT_OUTPUT_FIELD,
             ): str,
+            vol.Optional(
+                CONF_TIMEOUT,
+                description={
+                    "suggested_value": options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
+                },
+                default=DEFAULT_TIMEOUT,
+            ): vol.All(vol.Coerce(int), vol.Range(min=1, max=300)),
         }
     )
 
