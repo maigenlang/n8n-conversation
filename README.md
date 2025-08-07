@@ -18,6 +18,7 @@ _Integration to connect Home Assistant with n8n workflows through conversation a
 - 📡 Send conversation context and exposed entities to n8n webhooks
 - 🏠 Seamless integration with Home Assistant's voice assistant system
 - 🔧 Configurable webhook URLs and output fields
+- ⏱️ Configurable timeout for handling long-running workflows (1-300 seconds)
 
 ## Installation
 
@@ -49,6 +50,7 @@ _Integration to connect Home Assistant with n8n workflows through conversation a
    - **Name**: A friendly name for your n8n agent
    - **Webhook URL**: The URL of your n8n webhook endpoint (remember to activate the workflow in n8n and to use the production webhook URL)
    - **Output Field**: The field name in the n8n response containing the reply (default: "output")
+   - **Timeout**: The timeout in seconds for waiting for a response from n8n (default: 30 seconds, range: 1-300 seconds)
 
 ### n8n Workflow Setup
 

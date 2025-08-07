@@ -19,7 +19,13 @@ from homeassistant.helpers import (
 )
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import CONF_OUTPUT_FIELD, CONF_WEBHOOK_URL, DOMAIN
+from .const import (
+    CONF_OUTPUT_FIELD,
+    CONF_TIMEOUT,
+    CONF_WEBHOOK_URL,
+    DEFAULT_TIMEOUT,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -116,9 +122,10 @@ class N8nConversationEntity(
             ),
         }
 
+        timeout = self._config_entry.options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
         async with (
             aiohttp.ClientSession() as session,
-            session.post(self._webhook_url, json=payload, timeout=10) as response,
+            session.post(self._webhook_url, json=payload, timeout=timeout) as response,
         ):
             if response.status != 200:
                 raise HomeAssistantError(
