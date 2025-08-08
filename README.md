@@ -15,6 +15,7 @@ _Integration to connect Home Assistant with n8n workflows through conversation a
 ## Features
 
 - 🤖 Use n8n workflows as conversation agents in Home Assistant
+- 🧩 AI Tasks via a dedicated webhook, supporting text or structured outputs
 - 📡 Send conversation context and exposed entities to n8n webhooks
 - 🏠 Seamless integration with Home Assistant's voice assistant system
 - 🔧 Configurable webhook URLs and output fields
@@ -49,6 +50,7 @@ _Integration to connect Home Assistant with n8n workflows through conversation a
 3. Configure the integration with:
    - **Name**: A friendly name for your n8n agent
    - **Webhook URL**: The URL of your n8n webhook endpoint (remember to activate the workflow in n8n and to use the production webhook URL)
+   - **AI Task Webhook URL (optional)**: A separate webhook endpoint for AI Tasks
    - **Output Field**: The field name in the n8n response containing the reply (default: "output")
    - **Timeout**: The timeout in seconds for waiting for a response from n8n (default: 30 seconds, range: 1-300 seconds)
 
@@ -57,39 +59,58 @@ _Integration to connect Home Assistant with n8n workflows through conversation a
 Create an n8n workflow with the following structure:
 
 1. **Webhook Trigger**: Set up a webhook trigger to receive POST requests from Home Assistant
-2. **Process the payload**: The webhook will receive:
-
-   ```json
-   {
-     "user_id": "user_id_from_ha",
-     "messages": [
-       {
-         "role": "user|assistant|system",
-         "content": "message_content"
-       }
-     ],
-     "query": "latest_user_message",
-     "exposed_entities": [
-       {
-         "entity_id": "light.living_room",
-         "name": "Living Room Light",
-         "state": "on",
-         "aliases": ["main light"],
-         "area_id": "living_room",
-         "area_name": "Living Room"
-       }
-     ]
-   }
-   ```
-
+2. **Process the payload**: Your workflow should include a node to process the incoming payload from Home Assistant. This can be done using the "Set" node to extract relevant information from the incoming JSON.
 3. **Your AI/Processing Logic**: Process the conversation and entity data
-4. **Return Response**: Return a JSON response with your configured output field:
+4. **Return Response**: Return a JSON response with your configured output field
 
-   ```json
-   {
-     "output": "Your AI assistant response here"
-   }
-   ```
+Note: For AI Tasks, the output value should adhere to the JSON schema provided in the `structure` field.
+
+#### Input schema
+
+##### For **conversations**
+
+```json
+{
+  "conversation_id": "abc123",
+  "user_id": "user id from ha",
+  "messages": [
+    {
+      "role": "assistant|system|tool_result|user",
+      "content": "message content"
+    }
+  ],
+  "query": "latest user message",
+  "exposed_entities": [
+    {
+      "entity_id": "light.living_room",
+      "name": "Living Room Light",
+      "state": "on",
+      "aliases": ["main light"],
+      "area_id": "living_room",
+      "area_name": "Living Room"
+    }
+  ],
+  "extra_system_prompt": "optional additional system instructions"
+}
+```
+
+##### For **AI tasks**
+
+```json
+{
+  "conversation_id": "abc123",
+  "messages": [
+    {
+      "role": "assistant|system|tool_result|user",
+      "content": "message content"
+    }
+  ],
+  "query": "task instructions",
+  "task_name": "task name",
+  "extra_system_prompt": "optional additional system instructions",
+  "structure": "json schema for output"
+}
+```
 
 ## Usage
 

@@ -16,6 +16,7 @@ from homeassistant.config_entries import (
 from homeassistant.core import callback
 
 from .const import (
+    CONF_AI_TASK_WEBHOOK_URL,
     CONF_NAME,
     CONF_OUTPUT_FIELD,
     CONF_TIMEOUT,
@@ -47,6 +48,15 @@ def _get_schema(options: dict[str, Any] | None = None) -> vol.Schema:
                 description={
                     "suggested_value": options.get(
                         CONF_WEBHOOK_URL, DEFAULT_WEBHOOK_URL
+                    )
+                },
+                default=DEFAULT_WEBHOOK_URL,
+            ): str,
+            vol.Optional(
+                CONF_AI_TASK_WEBHOOK_URL,
+                description={
+                    "suggested_value": options.get(
+                        CONF_AI_TASK_WEBHOOK_URL, DEFAULT_WEBHOOK_URL
                     )
                 },
                 default=DEFAULT_WEBHOOK_URL,
@@ -99,6 +109,18 @@ class N8nConversationConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors={"base": "invalid_webhook_url"},
             )
 
+        ai_task_url: str = user_input.get(CONF_AI_TASK_WEBHOOK_URL, "")
+        if ai_task_url and not ai_task_url.startswith(("http://", "https://")):
+            _LOGGER.error("Invalid AI Task webhook URL: %s", ai_task_url)
+            return self.async_show_form(
+                step_id="user",
+                data_schema=_get_schema(user_input),
+                errors={"base": "invalid_webhook_url"},
+            )
+
+        await self.async_set_unique_id(user_input[CONF_NAME])
+        self._abort_if_unique_id_configured()
+
         return self.async_create_entry(
             title=user_input[CONF_NAME], data={}, options=user_input
         )
@@ -119,7 +141,7 @@ class OptionsFlowHandler(OptionsFlow):
         """Initialize the options flow handler."""
         self.options = options
 
-    async def async_step_init(self, user_input=None):
+    async def async_step_init(self, user_input: dict[str, Any] | None = None):
         """Handle initial step."""
 
         if user_input is None:
@@ -139,9 +161,18 @@ class OptionsFlowHandler(OptionsFlow):
         ):
             _LOGGER.error("Invalid webhook URL: %s", webhook_url)
             return self.async_show_form(
-                step_id="user",
+                step_id="init",
                 data_schema=_get_schema(user_input),
                 errors={"base": "invalid_webhook_url"},
             )
 
-        return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
+        ai_task_url: str = user_input.get(CONF_AI_TASK_WEBHOOK_URL, "")
+        if ai_task_url and not ai_task_url.startswith(("http://", "https://")):
+            _LOGGER.error("Invalid AI Task webhook URL: %s", ai_task_url)
+            return self.async_show_form(
+                step_id="init",
+                data_schema=_get_schema(user_input),
+                errors={"base": "invalid_webhook_url"},
+            )
+
+        return self.async_create_entry(data=user_input)
