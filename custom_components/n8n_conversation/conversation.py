@@ -4,8 +4,6 @@ import json
 import logging
 from typing import Any, Literal
 
-import aiohttp
-
 from homeassistant.components import conversation
 from homeassistant.components.homeassistant import async_should_expose
 from homeassistant.config_entries import ConfigEntry
@@ -19,13 +17,8 @@ from homeassistant.helpers import (
 )
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .const import (
-    CONF_OUTPUT_FIELD,
-    CONF_TIMEOUT,
-    CONF_WEBHOOK_URL,
-    DEFAULT_TIMEOUT,
-    DOMAIN,
-)
+from .const import CONF_WEBHOOK_URL, DOMAIN
+from .entity import N8nEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,25 +35,19 @@ async def async_setup_entry(
 
 
 class N8nConversationEntity(
-    conversation.ConversationEntity, conversation.AbstractConversationAgent
+    conversation.ConversationEntity, conversation.AbstractConversationAgent, N8nEntity
 ):
     """n8n conversation agent."""
 
     _attr_has_entity_name = True
     _attr_name = None
+    _attr_supported_features = conversation.ConversationEntityFeature.CONTROL
 
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize the agent."""
-        self._config_entry = config_entry
+        N8nEntity.__init__(self, config_entry)
         self._webhook_url = config_entry.options[CONF_WEBHOOK_URL]
-        self._attr_supported_features = conversation.ConversationEntityFeature.CONTROL
-        self._attr_unique_id = config_entry.entry_id
-        self._attr_device_info = dr.DeviceInfo(
-            identifiers={(DOMAIN, config_entry.entry_id)},
-            name=config_entry.title,
-            manufacturer="n8n",
-            entry_type=dr.DeviceEntryType.SERVICE,
-        )
+        self._attr_unique_id = f"{config_entry.entry_id}-conversation"
 
     @property
     def supported_languages(self) -> list[str] | Literal["*"]:
@@ -98,11 +85,11 @@ class N8nConversationEntity(
         chat_log: conversation.ChatLog,
     ) -> None:
         """Send the chat log to the n8n webhook and process the response."""
-        messages = [
-            self._convert_content_to_param(content) for content in chat_log.content
-        ]
+        payload = self._build_payload(chat_log)
         user_messages = [
-            user_message for user_message in messages if user_message["role"] == "user"
+            user_message
+            for user_message in payload["messages"]
+            if user_message["role"] == "user"
         ]
 
         if not user_messages:
@@ -113,54 +100,21 @@ class N8nConversationEntity(
                 return list(obj)
             return obj
 
-        payload = {
-            "user_id": user_input.context.user_id,
-            "messages": messages,
-            "query": user_messages[-1]["content"],
-            "exposed_entities": json.dumps(
-                self._get_exposed_entities(), default=set_default
-            ),
-        }
+        payload["user_id"] = user_input.context.user_id
+        payload["query"] = user_messages[-1]["content"]
+        payload["exposed_entities"] = json.dumps(
+            self._get_exposed_entities(), default=set_default
+        )
 
-        timeout = self._config_entry.options.get(CONF_TIMEOUT, DEFAULT_TIMEOUT)
-        async with (
-            aiohttp.ClientSession() as session,
-            session.post(self._webhook_url, json=payload, timeout=timeout) as response,
-        ):
-            if response.status != 200:
-                raise HomeAssistantError(
-                    f"Error contacting n8n webhook: HTTP {response.status} - {response.reason}"
-                )
+        reply = await self._send_payload(payload)
 
-            data = await response.json()
-
-            if not isinstance(data, dict):
-                raise HomeAssistantError(
-                    "Invalid response from n8n webhook, expected a JSON object"
-                )
-
-        output_field = self._config_entry.options[CONF_OUTPUT_FIELD]
-        reply = data.get(output_field)
-
-        if not reply:
-            raise HomeAssistantError("No response found in n8n webhook data")
-
-        async for content in chat_log.async_add_assistant_content(
+        async for _ in chat_log.async_add_assistant_content(
             conversation.AssistantContent(
                 self.entity_id,
                 reply,
             )
         ):
-            messages.extend(self._convert_content_to_param(content))
-
-    def _convert_content_to_param(
-        self, content: conversation.Content
-    ) -> dict[str, Any]:
-        """Convert any native chat message for this agent to the native format."""
-        return {
-            "role": content.role,
-            "content": content.content,
-        }
+            pass
 
     def _get_exposed_entities(self) -> list[dict[str, Any]]:
         states = [

@@ -5,6 +5,7 @@ DOMAIN = "n8n_conversation"
 CONF_NAME = "name"
 CONF_WEBHOOK_URL = "webhook_url"
 CONF_OUTPUT_FIELD = "output_field"
+CONF_AI_TASK_WEBHOOK_URL = "ai_task_webhook_url"
 CONF_TIMEOUT = "timeout"
 
 DEFAULT_NAME = "n8n"

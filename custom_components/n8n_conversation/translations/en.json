@@ -5,6 +5,7 @@
                 "data": {
                     "name": "Name",
                     "webhook_url": "Webhook URL",
+                    "ai_task_webhook_url": "AI task webhook URL",
                     "output_field": "Output Field",
                     "timeout": "Timeout (seconds)"
                 }
